@@ -42,7 +42,7 @@ public class TinyArrayList<E> implements List<E> {
      * @param index
      */
     private void checkOutOfBoundsCond(int index) {
-        if(index > tailPosition) {
+        if(index < 0 || index > tailPosition) {
             throw new IndexOutOfBoundsException("max length is " + (tailPosition - 1) + " but input position is " + index);
         }
     }
@@ -120,7 +120,7 @@ public class TinyArrayList<E> implements List<E> {
             @Override
             public E next() {
                 E e =  (E) element[iteratorTailPosition];
-                iteratorTailPosition ++;
+                iteratorTailPosition++;
                 return e;
             }
         };

@@ -21,14 +21,5 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-.idea/.gitignore
-.idea/checkstyle-idea.xml
-.idea/codeStyles/
-.idea/compiler.xml
-.idea/dbnavigator.xml
-.idea/java-fundament.iml
-.idea/misc.xml
-.idea/modules.xml
-.idea/uiDesigner.xml
-.idea/vcs.xml
+.idea/
 target/
