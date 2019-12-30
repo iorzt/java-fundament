@@ -4,8 +4,6 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -15,6 +13,9 @@ import java.util.stream.IntStream;
 public class TinyHashSet<E> implements Set<E> {
 
     private int hashBucketCapacity = 2;
+
+    private int rehashFactor = 0; // max length of array in bucket
+
     private List<List<E>> hashValueArray = new ArrayList<>(hashBucketCapacity);
 
     public TinyHashSet() {
@@ -25,8 +26,37 @@ public class TinyHashSet<E> implements Set<E> {
         return hashCode % hashBucketCapacity;
     }
 
-    private void rehash() {
+    private boolean checkExist(List<E> list, E e) {
+        if (list.size() == 0) {
+            return false;
+        }
+        for (E innerE: list) {
+            if (e.equals(innerE)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    private void refreshRehashFactor(int size) {
+        if (size > rehashFactor) {
+            rehashFactor = size;
+        }
+    }
+
+    // when list size more than 4, double increase the bucket list
+    private void rehash() {
+        if (rehashFactor <= 2) {
+            return;
+        }
+
+        rehashFactor = 0;
+        hashBucketCapacity *= 2;
+
+        List<List<E>> oldHashValueArray = hashValueArray;
+        hashValueArray = new ArrayList<>(hashBucketCapacity);
+        IntStream.range(0, hashBucketCapacity).forEach(i -> hashValueArray.add(new ArrayList<>()));
+        oldHashValueArray.forEach(array -> array.forEach(e -> add(e)));
     }
 
     @Override
@@ -39,6 +69,11 @@ public class TinyHashSet<E> implements Set<E> {
 
         int hashCode = e.hashCode();
         int index = simpleHash(hashCode);
+        boolean isExist = checkExist(hashValueArray.get(index), e);
+        if (isExist) {
+            return false;
+        }
+        refreshRehashFactor(hashValueArray.get(index).size() + 1);
         return hashValueArray.get(index).add(e);
     }
 
@@ -133,11 +168,16 @@ public class TinyHashSet<E> implements Set<E> {
         set.add(1);
         set.add(4);
         set.add(8);
+        set.add(8);
         set.add(11);
         set.add(184);
         set.add(22);
         set.add(84);
         set.add(77);
+        set.add(76);
+        set.add(66);
+        set.add(36);
+        set.add(16);
         set.stream().forEach(System.out::println);
     }
 
